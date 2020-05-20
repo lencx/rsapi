@@ -7,7 +7,10 @@
 # order to facilitate automated database setup and migration generation
 cargo install diesel_cli --no-default-features --features mysql
 
-# step2:ss
+# step2: create the rust project
+cargo init --bin rsapi
+
+# step3:
 # create the user, create the database, and set up permissions
 # (1)
 CREATE USER 'lencx'@'%' IDENTIFIED BY 'test123';
@@ -16,10 +19,10 @@ CREATE DATABASE rsapi;
 # (3)
 GRANT ALL PRIVILEGES ON rsapi.* TO lencx;
 
-# step3: connect to our database
+# step4: connect to our database
 export DATABASE_URL="mysql://root:test.123@localhost/rsapi"
 
-# step4: creates `migrations` directory + `src/schema.rs` file
+# step5: creates `migrations` directory + `src/schema.rs` file
 diesel setup
 # (1)
 diesel migration generate initialize
@@ -34,7 +37,7 @@ diesel migration run
 # Library not loaded
 diesel setup
 # dyld: Library not loaded: @rpath/libmysqlclient.21.dylib
-#   Referenced from: /Users/zakj/.cargo/bin/diesel
+#   Referenced from: ~/.cargo/bin/diesel
 #   Reason: image not found
 
 sudo ln -s /usr/local/mysql/lib/libmysqlclient.21.dylib /usr/local/lib/libmysqlclient.21.dylib
