@@ -1,0 +1,8 @@
+-- Your SQL goes here
+
+CREATE TABLE users (
+  id INTEGER AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(20) NOT NULL,
+  password VARCHAR(32) NOT NULL,
+  nickname VARCHAR(20) NOT NULL
+)

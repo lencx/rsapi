@@ -10,23 +10,19 @@ cargo install diesel_cli --no-default-features --features mysql
 # step2: create the rust project
 cargo init --bin rsapi
 
-# step3:
-# create the user, create the database, and set up permissions
-# (1)
-CREATE USER 'lencx'@'%' IDENTIFIED BY 'test123';
-# (2)
-CREATE DATABASE rsapi;
-# (3)
-GRANT ALL PRIVILEGES ON rsapi.* TO lencx;
+# step3: generate `.env` file(connect to our database)
+echo DATABASE_URL=mysql://root:test.123@localhost:3306/rsapi > .env
 
-# step4: connect to our database
-export DATABASE_URL="mysql://root:test.123@localhost/rsapi"
-
-# step5: creates `migrations` directory + `src/schema.rs` file
+# step4: creates `migrations` directory + `src/schema.rs` file
 diesel setup
-# (1)
-diesel migration generate initialize
-# (2)
+# (1): create user table
+# migrations/xxxx_users/{down,up}.sql
+diesel migration generate users
+
+# (2): edit up.sql and down.sql files
+# ...
+
+# (3)
 diesel migration run
 # diesel migration redo
 ```
@@ -61,6 +57,8 @@ PATH=$PATH:/usr/local/mysql/bin
 ```bash
 # login
 mysql -u root -p
+Enter password:
+# Welcome to the MySQL monitor.  Commands end with ; or \g.
 
 # create the user
 mysql> CREATE USER 'lencx'@'%' IDENTIFIED BY 'test123';
@@ -74,7 +72,8 @@ Query OK, 1 row affected (0.01 sec)
 mysql> GRANT ALL PRIVILEGES ON rsapi.* TO lencx;
 Query OK, 0 rows affected (0.00 sec)
 
-mysql> SHOW DATABASES;
+# mysql> SHOW DATABASES;
+mysql> show databases;
 +--------------------+
 | Database           |
 +--------------------+
@@ -85,6 +84,29 @@ mysql> SHOW DATABASES;
 | sys                |
 +--------------------+
 5 rows in set (0.00 sec)
+
+# https://stackoverflow.com/questions/3736407/mysql-server-port-number
+# port number of your local host on which MySQL.
+mysql> SHOW VARIABLES WHERE Variable_name = 'port';
++---------------+-------+
+| Variable_name | Value |
++---------------+-------+
+| port          | 3306  |
++---------------+-------+
+1 row in set (0.02 sec)
+
+# delete table
+mysql> drop table posts;
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> show tables;
++----------------------------+
+| Tables_in_rsapi            |
++----------------------------+
+| __diesel_schema_migrations |
+| users                      |
++----------------------------+
+2 rows in set (0.00 sec)
 
 # or `quit`
 mysql> exit
